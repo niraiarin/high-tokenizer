@@ -34,9 +34,6 @@ pythonVersion = "3.12"
 typeCheckingMode = "standard"
 include = ["pipeline", "high_tokenizer"]
 
-[tool.coverage.run]
-omit = ["high_tokenizer/domain_model.py"]
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --tb=short"

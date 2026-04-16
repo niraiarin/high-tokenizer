@@ -61,7 +61,6 @@ class TestHighTokenizerSpecsSummary:
 
     def test_all_components_have_specs(self) -> None:
         expected = {
-            "domain_model",
             "complexity_estimator",
             "type_system",
             "mdl_evaluator",
