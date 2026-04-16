@@ -30,6 +30,26 @@ class TestGenerateTests:
         assert "def test_transfer" in code
         assert "pre-condition" in code.lower() or "from_acct" in code
 
+    def test_post_condition_has_skip(self) -> None:
+        """Post-condition tests should be generated with @pytest.mark.skip."""
+        spec = SpecAST(
+            items=(
+                FuncDecl(
+                    FuncExpr(
+                        name="transfer",
+                        inputs=(ParamExpr("from_acct", "Int"),),
+                        output="Bool",
+                        pre=("(> from_acct 0)",),
+                        post=("(= result true)",),
+                    )
+                ),
+            )
+        )
+        code = generate_tests(spec)
+        assert "@pytest.mark.skip" in code
+        assert "def test_transfer_post_condition" in code
+        assert "result = transfer(" in code
+
     def test_generates_pre_condition_test(self) -> None:
         """Test = { x | pre(x) }: should generate inputs satisfying pre."""
         spec = SpecAST(

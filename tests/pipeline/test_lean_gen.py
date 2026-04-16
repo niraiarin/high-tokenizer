@@ -28,6 +28,13 @@ class TestGenerateLeanTypeSpec:
         assert "UserId_TypeSpec" in code
         assert "α" in code or "Int" in code
 
+    def test_predicate_encoding(self) -> None:
+        """#6: predicates should be encoded as Lean Prop, not True."""
+        spec = SpecAST(items=(TypeDecl(TypeExpr("UserId", "Int", ("(>= 0)",))),))
+        code = generate_lean(spec)
+        assert "x ≥ 0" in code
+        assert "True  -- TODO" not in code
+
     def test_type_with_no_predicates(self) -> None:
         spec = SpecAST(items=(TypeDecl(TypeExpr("Name", "String", ())),))
         code = generate_lean(spec)
@@ -41,9 +48,9 @@ class TestGenerateLeanFuncSpec:
                 FuncDecl(
                     FuncExpr(
                         name="transfer",
-                        inputs=(ParamExpr("from", "UserId"),),
+                        inputs=(ParamExpr("from_acct", "UserId"),),
                         output="Bool",
-                        pre=("(> from 0)",),
+                        pre=("(> from_acct 0)",),
                         post=("(= result true)",),
                     )
                 ),
@@ -54,7 +61,26 @@ class TestGenerateLeanFuncSpec:
         assert "pre" in code
         assert "post" in code
 
-    def test_func_with_multiple_inputs(self) -> None:
+    def test_func_pre_encoded(self) -> None:
+        """#6: pre-conditions should be encoded as Lean Prop."""
+        spec = SpecAST(
+            items=(
+                FuncDecl(
+                    FuncExpr(
+                        name="check",
+                        inputs=(ParamExpr("x", "Int"),),
+                        output="Bool",
+                        pre=("(> x 0)",),
+                        post=(),
+                    )
+                ),
+            )
+        )
+        code = generate_lean(spec)
+        assert "x > 0" in code
+
+    def test_func_with_multiple_inputs_noted(self) -> None:
+        """#3: multi-input functions should note product type need."""
         spec = SpecAST(
             items=(
                 FuncDecl(
@@ -70,6 +96,7 @@ class TestGenerateLeanFuncSpec:
         )
         code = generate_lean(spec)
         assert "add" in code
+        assert "multi-input" in code  # should have a NOTE about product type
 
 
 class TestGenerateLeanFull:

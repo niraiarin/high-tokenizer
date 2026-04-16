@@ -4,8 +4,9 @@ Corresponds to the AST → Test step in the spec_system.md pipeline:
   DSL → AST → Lean → SMT → **Test** → LLM → Code → Lean proof
 
 Implements Test = { x | pre(x) } from spec_system.md §5:
-generates test functions that create inputs satisfying pre-conditions
-and assert post-conditions on the output.
+generates test functions that verify pre-conditions are satisfiable.
+Post-condition tests are generated as skipped stubs for TDD Phase A-3
+(remove skip and implement function to enter Red → Green cycle).
 """
 
 from __future__ import annotations
@@ -53,16 +54,19 @@ def _gen_func_test(func: FuncExpr) -> str:
     lines.append("")
 
     if post_strs:
-        lines.append(f"def test_{name}_post_condition_structure() -> None:")
-        lines.append(f'    """Test that post-conditions for {name} are well-defined.')
+        lines.append("import pytest")
+        lines.append("")
+        lines.append("")
+        lines.append(f'@pytest.mark.skip(reason="TDD Phase A-3: implement {name}() first")')
+        lines.append(f"def test_{name}_post_condition() -> None:")
+        lines.append(f'    """Test post-conditions for {name}.')
         lines.append("")
         lines.append(f"    Post-conditions: {', '.join(post_strs)}")
+        lines.append(f"    Remove @skip and implement {name}() to enter Red → Green cycle.")
         lines.append('    """')
-        lines.append("    # Post-condition verification requires implementation.")
-        lines.append("    # This test will be filled in during TDD (Red phase).")
         for p in params:
             lines.append(f"    {p.name}: int = 1")
-        lines.append(f"    # result = {name}({', '.join(p.name for p in params)})")
+        lines.append(f"    result = {name}({', '.join(p.name for p in params)})")
         for i, post in enumerate(post_strs):
             lines.append(f"    # assert post[{i}]: {post}")
         lines.append("")
@@ -91,8 +95,8 @@ def _gen_type_invariant_test(name: str, predicates: tuple[str, ...]) -> str:
 def generate_tests(spec: SpecAST) -> str:
     """Generate pytest test code from a SpecAST.
 
-    For each FuncDecl: generates test functions that verify pre-conditions
-    are satisfiable and post-conditions are structurally defined.
+    For each FuncDecl: generates pre-condition satisfiability tests (active)
+    and post-condition tests (skipped, for TDD Phase A-3).
 
     For each TypeDecl: generates invariant satisfaction tests.
 

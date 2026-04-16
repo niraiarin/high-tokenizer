@@ -7,8 +7,7 @@
     (input (f FuncSpec) (g FuncSpec))
     (output Bool)
     (pre (>= f 0))
-    (pre (>= g 0))
-    (post (= result true)))
+    (pre (>= g 0)))
 
   (func testSet
     (input (spec FuncSpec))
