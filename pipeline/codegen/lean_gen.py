@@ -79,7 +79,9 @@ def generate_lean(spec: SpecAST) -> str:
     """
     sections: list[str] = []
 
-    # Header
+    # Header + import
+    sections.append("import SpecSystem.Basic")
+    sections.append("")
     sections.append("-- Auto-generated from DSL specification")
     sections.append("-- Do not edit manually; regenerate from .spec files")
     sections.append("")
