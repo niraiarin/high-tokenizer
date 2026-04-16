@@ -1,4 +1,5 @@
 import SpecSystem.Basic
+import SpecSystem.Theory
 
 /-!
 # SpecSystem.DSL.Macros
@@ -55,3 +56,28 @@ macro "specFunc " name:ident inSpec:ident outSpec:ident
       pre := $pre
       post := $post
       sound := by sorry)
+
+-- ============================================================
+-- specTheorem: 定理宣言マクロ (ACL2 式定理分離, #21)
+-- ============================================================
+
+/-- `specTheorem Name | statement | proof` — declare a theorem.
+    Use `by sorry` for proof to defer. -/
+macro "specTheorem " name:ident " | " stmt:term " | " prf:term : command =>
+  `(theorem $name : $stmt := $prf)
+
+/-- `specTheorem Name | statement` — declare with sorry proof. -/
+macro "specTheorem " name:ident " | " stmt:term : command =>
+  `(theorem $name : $stmt := by sorry)
+
+-- ============================================================
+-- specBound: 上界/下界宣言マクロ (#21)
+-- ============================================================
+
+/-- `specBound Name | bound_statement | proof` — declare a bound. -/
+macro "specBound " name:ident " | " stmt:term " | " prf:term : command =>
+  `(theorem $name : $stmt := $prf)
+
+/-- `specBound Name | bound_statement` — declare with sorry proof. -/
+macro "specBound " name:ident " | " stmt:term : command =>
+  `(theorem $name : $stmt := by sorry)

@@ -67,6 +67,8 @@ class TestHighTokenizerSpecsSummary:
             "mdl_evaluator",
             "constraint_validator",
             "engines",
+            "inference_control",  # §5.5.6: optimal stopping + overthinking
+            "type_preservation",  # §5.1.1 + §5.1.1b + §5.5.3
         }
         actual = {f.stem for f in SPEC_FILES}
         missing = expected - actual
