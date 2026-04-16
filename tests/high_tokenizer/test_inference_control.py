@@ -145,3 +145,18 @@ def test_detectOverthinking_post_condition() -> None:
     optimalStep: int = 1
     detectOverthinking(currentStep, optimalStep)
     # assert post[0]: (>= result 0)
+
+
+def test_computeInformationGain_zero_step() -> None:
+    """Boundary: step <= 0 returns 0."""
+    assert computeInformationGain(0) == 0
+
+
+def test_computeViolationDensity_zero_constraints() -> None:
+    """Boundary: constraintCount=0 returns 0."""
+    assert computeViolationDensity(5, 0) == 0
+
+
+def test_optimalStop_zero_threshold() -> None:
+    """Boundary: threshold <= 0 returns 1."""
+    assert optimalStop(0) == 1

@@ -77,3 +77,9 @@ def test_validate_expansion_post_condition() -> None:
     context_size: int = 1
     validate_expansion(expansion_size, context_size)
     # assert post[0]: (>= result 0)
+
+
+def test_validate_expansion_zero_context() -> None:
+    """Boundary: context_size=0 returns expansion_size as violations."""
+    assert validate_expansion(5, 0) == 5
+    assert validate_expansion(0, 0) == 0
